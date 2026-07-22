@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContextOS — Telemetry & Observability Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Navigation Header -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Context<span class="highlight">OS</span></span>
+          <span class="brand-sub">Microkernel Runtime v1.0.0</span>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-badge active" id="kernel-status">
+          <span class="status-dot"></span> Kernel: <strong id="kernel-state">ONLINE</strong>
+        </div>
+        <div class="status-badge info">
+          <span class="icon">🔌</span> MCP Tools: <strong id="mcp-count">11</strong>
+        </div>
+        <div class="status-badge info">
+          <span class="icon">🌐</span> A2A Agents: <strong id="a2a-count">3</strong>
+        </div>
+        <div class="status-badge success">
+          <span class="icon">⚡</span> Token Savings: <strong id="token-savings">64.2%</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+      
+      <!-- Left Column: Navigation & Quick Actions -->
+      <aside class="sidebar card">
+        <h3 class="section-title">Navigation</h3>
+        <nav class="nav-menu">
+          <button class="nav-item active" data-tab="tab-workflow">
+            <span class="icon">🔄</span> Workflow Execution DAG
+          </button>
+          <button class="nav-item" data-tab="tab-compactor">
+            <span class="icon">🗜️</span> Prompt Compactor Inspector
+          </button>
+          <button class="nav-item" data-tab="tab-mcp">
+            <span class="icon">🔌</span> MCP Server Directory
+          </button>
+          <button class="nav-item" data-tab="tab-a2a">
+            <span class="icon">📡</span> A2A Inter-Agent Bus
+          </button>
+          <button class="nav-item" data-tab="tab-knowledge">
+            <span class="icon">🧠</span> Knowledge & Audit Graph
+          </button>
+        </nav>
+
+        <div class="sidebar-stats">
+          <h4 class="sub-title">System Metrics</h4>
+          <div class="metric-row">
+            <span>Active Sessions</span>
+            <strong id="stat-sessions">1</strong>
+          </div>
+          <div class="metric-row">
+            <span>Workflows Executed</span>
+            <strong id="stat-workflows">2</strong>
+          </div>
+          <div class="metric-row">
+            <span>A2A Events</span>
+            <strong id="stat-events">14</strong>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="btn-trigger-workflow">
+          <span>⚡ Run Sample Workflow</span>
+        </button>
+      </aside>
+
+      <!-- Main Workspace Views -->
+      <section class="workspace">
+        
+        <!-- Tab 1: Workflow DAG visualizer -->
+        <div class="tab-content active" id="tab-workflow">
+          <div class="card card-header-row">
+            <div>
+              <h2>Workflow Execution State DAG</h2>
+              <p class="subtitle">Live state machine graph rendering, step latency, and checkpoint audit trace</p>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-secondary" id="btn-refresh-wf">Refresh State</button>
+              <button class="btn btn-success" id="btn-run-step">Execute Next Step</button>
+            </div>
+          </div>
+
+          <div class="card graph-container">
+            <div class="dag-nodes" id="dag-nodes-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="card detail-box">
+            <h3>Workflow Step Inspector</h3>
+            <pre class="code-block" id="wf-step-detail">Select a workflow step above to view parameters, outputs, and latency metrics.</pre>
+          </div>
+        </div>
+
+        <!-- Tab 2: Prompt Compactor Inspector -->
+        <div class="tab-content" id="tab-compactor">
+          <div class="card">
+            <h2>Context Window & Token Compactor Inspector</h2>
+            <p class="subtitle">Simulate real-time turn sliding window compaction, fact retrieval, and token savings</p>
+            
+            <div class="compactor-grid">
+              <div class="input-panel">
+                <label>System Prompt</label>
+                <textarea id="compactor-sys" rows="3">You are ContextOS Core Reasoning Agent with access to high-performance memory tools.</textarea>
+                
+                <label>Add Conversation Turn</label>
+                <div class="turn-input-row">
+                  <select id="turn-role">
+                    <option value="user">User</option>
+                    <option value="assistant">Assistant</option>
+                  </select>
+                  <input type="text" id="turn-content" placeholder="Type prompt message content...">
+                  <button class="btn btn-primary" id="btn-add-turn">Add Turn</button>
+                </div>
+
+                <div class="turn-history-list" id="turn-history-list">
+                  <!-- History turns -->
+                </div>
+              </div>
+
+              <div class="output-panel">
+                <div class="metric-cards">
+                  <div class="m-card">
+                    <span class="m-label">Raw Tokens</span>
+                    <span class="m-value" id="comp-raw">0</span>
+                  </div>
+                  <div class="m-card">
+                    <span class="m-label">Compacted Tokens</span>
+                    <span class="m-value highlight" id="comp-compacted">0</span>
+                  </div>
+                  <div class="m-card">
+                    <span class="m-label">Savings</span>
+                    <span class="m-value success" id="comp-savings">0%</span>
+                  </div>
+                  <div class="m-card">
+                    <span class="m-label">Latency</span>
+                    <span class="m-value" id="comp-latency">0ms</span>
+                  </div>
+                </div>
+
+                <label>Generated Optimized Prompt Output</label>
+                <pre class="code-block" id="comp-output">Click "Compact Context" to compute optimized prompt.</pre>
+                <button class="btn btn-success btn-full" id="btn-run-compactor">⚡ Re-calculate Compaction</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: MCP Server Directory -->
+        <div class="tab-content" id="tab-mcp">
+          <div class="card">
+            <h2>Model Context Protocol (MCP) Directory</h2>
+            <p class="subtitle">Isolated tool plugins exposing vector memory, graph storage, and system execution</p>
+            
+            <div class="mcp-servers-grid" id="mcp-servers-grid">
+              <!-- MCP servers list -->
+            </div>
+
+            <div class="card tool-runner-card">
+              <h3>Dispatch MCP Tool</h3>
+              <div class="tool-dispatch-row">
+                <select id="tool-select"></select>
+                <input type="text" id="tool-args" placeholder='JSON arguments e.g. {"key": "test"}' value='{}'>
+                <button class="btn btn-primary" id="btn-dispatch-tool">Execute Tool</button>
+              </div>
+              <pre class="code-block" id="tool-dispatch-result">Tool output will appear here...</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: A2A Inter-Agent Bus -->
+        <div class="tab-content" id="tab-a2a">
+          <div class="card">
+            <h2>Agent-to-Agent (A2A) Event & Negotiation Bus</h2>
+            <p class="subtitle">Live inter-agent protocol message router, task negotiation, and state synchronization</p>
+
+            <div class="agents-grid" id="a2a-agents-grid">
+              <!-- Agents rendering -->
+            </div>
+
+            <div class="a2a-publish-section card">
+              <h3>Publish Event to A2A Bus</h3>
+              <div class="a2a-form-row">
+                <input type="text" id="a2a-topic" placeholder="Topic e.g. a2a.tasks">
+                <input type="text" id="a2a-type" placeholder="Event Type e.g. TASK_SUBMITTED">
+                <input type="text" id="a2a-sender" placeholder="Sender ID" value="agent_planner">
+                <button class="btn btn-primary" id="btn-publish-a2a">Publish Event</button>
+              </div>
+            </div>
+
+            <h3>Recent A2A Event Stream</h3>
+            <div class="event-stream-log" id="a2a-event-stream">
+              <!-- Events list -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 5: Knowledge & Audit Graph -->
+        <div class="tab-content" id="tab-knowledge">
+          <div class="card">
+            <h2>Neo4j Knowledge Graph & Postgres Audit Trail</h2>
+            <p class="subtitle">Explore entity relationships and historical execution audit checkpoints</p>
+
+            <div class="knowledge-grid">
+              <div class="graph-box card">
+                <h3>Knowledge Graph Nodes & Edges</h3>
+                <div class="nodes-visual" id="kg-visual">
+                  <!-- Visual nodes -->
+                </div>
+              </div>
+
+              <div class="audit-box card">
+                <h3>PostgreSQL Execution Audit Logs</h3>
+                <div class="audit-list" id="audit-list">
+                  <!-- Audit items -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script src="/src/app.js"></script>
+</body>
+</html>

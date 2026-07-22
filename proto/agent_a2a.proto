@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package contextos.a2a;
+
+option go_package = "kernel/internal/a2a/pb";
+
+// Agent Message Header
+message Header {
+  string message_id = 1;
+  string sender_id = 2;
+  string receiver_id = 3;
+  int64 timestamp = 4;
+  string trace_id = 5;
+}
+
+// Task Negotiation Request
+message TaskRequest {
+  Header header = 1;
+  string task_id = 2;
+  string action = 3;
+  string payload = 4; // JSON-encoded parameters
+  int32 priority = 5;
+  int64 timeout_ms = 6;
+}
+
+// Task Response
+message TaskResponse {
+  Header header = 1;
+  string task_id = 2;
+  enum Status {
+    UNKNOWN = 0;
+    ACCEPTED = 1;
+    REJECTED = 2;
+    COMPLETED = 3;
+    FAILED = 4;
+  }
+  Status status = 3;
+  string result = 4;
+  string error_message = 5;
+  int64 execution_time_ms = 6;
+}
+
+// Event Broadcast Message
+message EventMessage {
+  Header header = 1;
+  string topic = 2;
+  string event_type = 3;
+  string data_json = 4;
+}
+
+// State Synchronization Sync Message
+message StateSyncMessage {
+  Header header = 1;
+  string session_id = 2;
+  string agent_id = 3;
+  map<string, string> state_delta = 4;
+  int64 sequence_number = 5;
+}
+
+// Heartbeat
+message Heartbeat {
+  Header header = 1;
+  string agent_id = 2;
+  string status = 3;
+  float cpu_usage = 4;
+  float memory_usage_mb = 5;
+  int32 active_tasks = 6;
+}
+
+// A2A Service Protocol Definition
+service AgentToAgentService {
+  rpc SubmitTask (TaskRequest) returns (TaskResponse);
+  rpc StreamEvents (EventMessage) returns (stream EventMessage);
+  rpc SyncState (StateSyncMessage) returns (StateSyncMessage);
+  rpc SendHeartbeat (Heartbeat) returns (Heartbeat);
+}
