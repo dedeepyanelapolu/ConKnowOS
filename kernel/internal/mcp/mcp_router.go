@@ -15,11 +15,14 @@ type ServerInfo struct {
 	ToolsCount   int    `json:"tools_count"`
 }
 
+type ToolHandler func(args map[string]interface{}) (interface{}, error)
+
 type ToolInfo struct {
 	Name        string                 `json:"name"`
 	Description string                 `json:"description"`
 	ServerID    string                 `json:"server_id"`
 	Parameters  map[string]interface{} `json:"parameters"`
+	Handler     ToolHandler            `json:"-"`
 }
 
 type Router struct {
@@ -89,6 +92,10 @@ func (r *Router) Dispatch(toolName string, args map[string]interface{}) (interfa
 
 	if !exists {
 		return nil, fmt.Errorf("tool %s not registered", toolName)
+	}
+
+	if tool.Handler != nil {
+		return tool.Handler(args)
 	}
 
 	return fmt.Sprintf("Executed tool %s on server %s with args %v", tool.Name, tool.ServerID, args), nil

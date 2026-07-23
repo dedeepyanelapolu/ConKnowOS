@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contextos-sdk"
+version = "1.0.0"
+description = "Python Client SDK for ContextOS"
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2.25.0",
+    "websockets>=10.0",
+]

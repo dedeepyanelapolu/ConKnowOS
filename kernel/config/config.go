@@ -6,16 +6,18 @@ import (
 )
 
 type Config struct {
-	Host                 string
-	Port                 int
-	RedisURL             string
-	QdrantURL            string
-	Neo4jURI             string
-	PostgresDSN          string
-	MaxContextTokens     int
-	TargetSummaryTokens  int
-	SlidingWindowTurns   int
-	CompactionRatio      float64
+	Host                string
+	Port                int
+	RedisURL            string
+	QdrantURL           string
+	Neo4jURI            string
+	Neo4jUser           string
+	Neo4jPassword       string
+	PostgresDSN         string
+	MaxContextTokens    int
+	TargetSummaryTokens int
+	SlidingWindowTurns  int
+	CompactionRatio     float64
 }
 
 func LoadConfig() *Config {
@@ -31,6 +33,8 @@ func LoadConfig() *Config {
 		RedisURL:            getEnv("REDIS_URL", "redis://localhost:6379/0"),
 		QdrantURL:           getEnv("QDRANT_URL", "http://localhost:6333"),
 		Neo4jURI:            getEnv("NEO4J_URI", "bolt://localhost:7687"),
+		Neo4jUser:           getEnv("NEO4J_USER", "neo4j"),
+		Neo4jPassword:       getEnv("NEO4J_PASSWORD", "password123"),
 		PostgresDSN:         getEnv("POSTGRES_DSN", "postgresql://contextos:secret@localhost:5432/contextos_db"),
 		MaxContextTokens:    maxTokens,
 		TargetSummaryTokens: targetSummary,

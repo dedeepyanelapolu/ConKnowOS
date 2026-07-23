@@ -74,3 +74,26 @@ service AgentToAgentService {
   rpc SyncState (StateSyncMessage) returns (StateSyncMessage);
   rpc SendHeartbeat (Heartbeat) returns (Heartbeat);
 }
+
+message AgentTaskRequest {
+  string session_id = 1;
+  string sender_agent_id = 2;
+  string target_agent_id = 3;
+  string task_payload = 4;
+  map<string, string> context_data = 5;
+}
+
+message AgentTaskResponse {
+  string session_id = 1;
+  string status = 2;
+  string result_payload = 3;
+  string error_message = 4;
+}
+
+message A2AEvent {
+  string event_id = 1;
+  string event_type = 2; // e.g. HANDOFF, NEGOTIATE, BROADCAST
+  string sender = 3;
+  string payload = 4;
+}
+

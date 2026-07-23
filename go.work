@@ -1,0 +1,8 @@
+go 1.25.0
+
+use (
+	./kernel
+	./mcp_servers/knowledge_mcp
+	./mcp_servers/memory_mcp
+	./sdk/go
+)
